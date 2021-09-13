@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RetroNetworking
 
 public final class YelpFusionAPI {
     
@@ -104,19 +105,7 @@ public final class YelpFusionAPI {
             switch result {
             case .success(let data):
                 do {
-                    var businesses: [Business] = try createRestaurantsFrom(data: data)
-                    businesses = businesses.filter { business in
-                        // need to check that distance is within search radius since Yelp is a little loose with parameters
-                        guard let location = business.clLocation else { return false }
-                        
-                        let distanceToRestaurant = Int(location.distance(from: location))
-                        if distanceToRestaurant <= radiusInMeters {
-                            return true
-                        } else {
-                            // restaurant was too far away...but Yelp still gave it to us :/
-                            return false
-                        }
-                    }
+                    let businesses: [Business] = try createRestaurantsFrom(data: data)
                     callback(businesses)
                 } catch {
                     let error = error // for debug purposes

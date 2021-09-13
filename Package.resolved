@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "RetroNetworking",
+        "repositoryURL": "https://github.com/twhitt14/RetroNetworking",
+        "state": {
+          "branch": null,
+          "revision": "8fb20e4f96c81673c55aee6d535464021792c090",
+          "version": "1.0.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
