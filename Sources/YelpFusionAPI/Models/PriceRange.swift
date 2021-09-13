@@ -9,15 +9,15 @@
 import Foundation
 
 public class PriceRange {
-    var minPrice: PricePoint
-    var maxPrice: PricePoint
+    public var minPrice: PricePoint
+    public var maxPrice: PricePoint
     
-    init(minPrice: PricePoint = .one, maxPrice: PricePoint = .four) {
+    public init(minPrice: PricePoint = .one, maxPrice: PricePoint = .four) {
         self.minPrice = minPrice
         self.maxPrice = maxPrice
     }
     
-    var yelpAPIPriceRange: String {
+    internal var yelpAPIPriceRange: String {
         guard minPrice != maxPrice else {
             return String(minPrice.rawValue)
         }

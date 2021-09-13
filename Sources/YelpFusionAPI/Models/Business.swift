@@ -9,22 +9,22 @@
 import Foundation
 
 public struct Business: Codable {
-    var openNow: Bool?
+    public var openNow: Bool?
     
-    let categories: [Category]?
-    let coordinates: Coordinate?
-    let display_phone: String?
-    let distance: Double?
-    let id: String?
-    let alias: String?
-    let image_url: String?
-    let is_closed: Bool?
-    let location: Location?
-    let name: String?
-    let phone: String?
-    let price: String?
-    let rating: Double?
-    let review_count: Int?
-    let url: String?
-    let transactions: [String]?
+    public let categories: [Category]?
+    public let coordinates: Coordinate?
+    public let display_phone: String?
+    public let distance: Double?
+    public let id: String?
+    public let alias: String?
+    public let image_url: String?
+    public let is_closed: Bool?
+    public let location: Location?
+    public let name: String?
+    public let phone: String?
+    public let price: String?
+    public let rating: Double?
+    public let review_count: Int?
+    public let url: String?
+    public let transactions: [String]?
 }

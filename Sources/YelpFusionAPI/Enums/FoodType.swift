@@ -30,7 +30,7 @@ public enum FoodType: String, CaseIterable {
     case vegetarian = "vegetarian"
     case waffles = "waffles"
     
-    func titleCapitalized() -> String {
+    public func titleCapitalized() -> String {
         var title = "no title"
         switch self {
         case .asian:
