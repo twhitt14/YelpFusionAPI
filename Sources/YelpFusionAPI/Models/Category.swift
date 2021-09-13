@@ -9,6 +9,6 @@
 import Foundation
 
 public struct Category: Codable {
-    let alias: String?
-    let title: String?
+    public let alias: String?
+    public let title: String?
 }
