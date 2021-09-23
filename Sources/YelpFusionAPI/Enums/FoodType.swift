@@ -74,6 +74,14 @@ public enum FoodType: String, CaseIterable {
         case .waffles:
             title = "waffles"
         }
+#if os(iOS)
         return title.localizedCapitalized
+#elseif os(macOS)
+        if #available(macOS 10.11, *) {
+            return title.localizedCapitalized
+        } else {
+            return title.capitalized
+        }
+#endif
     }
 }
