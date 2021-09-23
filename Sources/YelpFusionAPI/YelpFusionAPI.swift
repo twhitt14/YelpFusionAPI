@@ -9,7 +9,7 @@
 import Foundation
 import RetroNetworking
 
-public final class YelpFusionAPI {
+public final class YelpFusionAPIModel {
     
     struct Keys {
         static let authorization = "Authorization"
