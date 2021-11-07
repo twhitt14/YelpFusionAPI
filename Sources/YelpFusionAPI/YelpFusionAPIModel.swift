@@ -1,5 +1,5 @@
 //
-//  YelpFusionAPI.swift
+//  YelpFusionAPIModel.swift
 //
 //
 //  Created by Trevor Whittingham on 9/13/21.
@@ -9,6 +9,10 @@
 import Foundation
 import RetroNetworking
 
+@available(iOS 15.0.0, *)
+@available(macOS 12.0.0, *)
+@available(watchOS 8.0.0, *)
+@available(tvOS 15.0.0, *)
 public final class YelpFusionAPIModel {
     
     struct Keys {
@@ -28,7 +32,7 @@ public final class YelpFusionAPIModel {
     private let yelpAPIBaseURL = "https://api.yelp.com/v3/"
     private let yelpAPISearchPath = "businesses/search"
     private lazy var yelpAPIAuthHeader = NetworkHeader(key: Keys.authorization, value: yelpAPIAuthString)
-    private let yelpAPIResultLimit: Int // 50
+    private let yelpAPIDefaultResultLimit: Int // max is 50
     private let yelpAPIRestaurantCategories = "restaurants,food"
     
     // MARK: -
@@ -36,7 +40,7 @@ public final class YelpFusionAPIModel {
     
     public init(yelpAPIKey: String, yelpAPIResultLimit: Int = 50) {
         self.yelpAPIKey = yelpAPIKey
-        self.yelpAPIResultLimit = min(max(yelpAPIResultLimit, 0), 50)
+        self.yelpAPIDefaultResultLimit = min(max(yelpAPIResultLimit, 0), 50)
     }
     
     // MARK: -
@@ -83,61 +87,37 @@ public final class YelpFusionAPIModel {
     // MARK: -
     // MARK: Public methods
     
-    public func getNearbyRestaurants(location: Coordinate, radiusInMeters: Int, foodTypes: [FoodType], priceRange: PriceRange, openNow: Bool, resultLimit: Int = 50, callback: @escaping ([Business]) -> Void) throws {
+    public func getNearbyRestaurants(location: Coordinate, radiusInMeters: Int, foodTypes: [FoodType], priceRange: PriceRange, openNow: Bool, resultLimit: Int? = nil) async throws -> [Business] {
 
         guard let url = createYelpURL(location: location,
                                       radiusInMeters: radiusInMeters,
                                       foodTypes: foodTypes,
                                       priceRange: priceRange,
                                       openNow: openNow,
-                                      resultLimit: resultLimit)
+                                      resultLimit: resultLimit ?? yelpAPIDefaultResultLimit)
             else
         {
             print("error, invalid url for yelp api")
             throw NSError.with(description: "Could not create URL for Yelp API")
         }
         
-        NetworkRequestService.makeRequestWith(url: url, headers: [yelpAPIAuthHeader]) { [self] result in
-            switch result {
-            case .success(let data):
-                do {
-                    let businesses: [Business] = try createRestaurantsFrom(data: data)
-                    callback(businesses)
-                } catch {
-                    let error = error // for debug purposes
-                    print(error)
-                }
-            case .failure(let error):
-                print("error getting restaurants: \(error.localizedDescription)")
-                callback([])
-            }
-        }
+        let data = try await NetworkRequestService.makeRequestWith(url: url, headers: [yelpAPIAuthHeader])
+        
+        return try createRestaurantsFrom(data: data)
     }
     
-    public func searchForRestaurantsWith(term: String, near location: Coordinate, completion: @escaping ([Business]) -> Void) {
+    public func searchForRestaurantsWith(term: String, near location: Coordinate, resultLimit: Int? = nil) async throws -> [Business] {
         let urlString = yelpAPIBaseURL + yelpAPISearchPath
         let parameters = [
-            NetworkParameter(key: Keys.latitude, value: location.latitude.description),
-            NetworkParameter(key: Keys.longitude, value: location.longitude.description),
-            NetworkParameter(key: Keys.limit, value: yelpAPIResultLimit.description),
-            NetworkParameter(key: Keys.categories, value: yelpAPIRestaurantCategories),
-            NetworkParameter(key: Keys.term, value: term.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? ""),
+            URLQueryItem(name: Keys.latitude, value: location.latitude.description),
+            URLQueryItem(name: Keys.longitude, value: location.longitude.description),
+            URLQueryItem(name: Keys.limit, value: resultLimit?.description ?? yelpAPIDefaultResultLimit.description),
+            URLQueryItem(name: Keys.categories, value: yelpAPIRestaurantCategories),
+            URLQueryItem(name: Keys.term, value: term),
         ]
-        NetworkRequestService.makeRequestWith(baseURLString: urlString, headers: [yelpAPIAuthHeader], parameters: parameters) { [self] result in
-            switch result {
-            case .success(let data):
-                do {
-                    let businesses = try createRestaurantsFrom(data: data)
-                    completion(businesses)
-                } catch {
-                    let error = error
-                    print(error)
-                    completion([])
-                }
-            case .failure(let error):
-                print(error.localizedDescription)
-                completion([])
-            }
-        }
+        
+        let data = try await NetworkRequestService.makeRequestWith(baseURLString: urlString, headers: [yelpAPIAuthHeader], parameters: parameters)
+        
+        return try createRestaurantsFrom(data: data)
     }
 }
