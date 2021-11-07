@@ -16,7 +16,7 @@ import YelpFusionAPI
 final class YelpFusionAPITests: XCTestCase {
     
     let apiKey = "[PUT_YOUR_API_KEY_HERE_TO_TEST__BUT__REMEMBER_NOT_TO_COMMIT_YOUR_KEY_TO_A_PUBLIC_REPOSITORY]"
-    let searchCoordinates = Coordinate(latitude: 37.331871770009, longitude: -122.030146079058)
+    let searchCoordinates = Coordinate(latitude: 37.33187177000945, longitude: -122.03014607905845)
     
     func testGetNearbyRestaurants() async throws {
         let yelpAPI = YelpFusionAPIModel(yelpAPIKey: apiKey)
