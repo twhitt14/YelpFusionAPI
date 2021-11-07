@@ -78,10 +78,6 @@ public final class YelpFusionAPIModel {
         let response = try JSONDecoder().decode(BusinessSearchResponse.self, from: data)
 
         return response.businesses
-        
-//        restaurantsData.compactMap({ restaurantObject in
-//            return Restaurant_Roulette.Restaurant.create(withYelpObject: restaurantObject, shouldSave: false)
-//        })
     }
     
     // MARK: -
