@@ -46,7 +46,16 @@ public final class YelpFusionAPIModel {
     // MARK: -
     // MARK: Private methods
     
-    private func createYelpURL(location: Coordinate, radiusInMeters: Int, foodTypes: [FoodType], priceRange: PriceRange, openNow: Bool, resultLimit: Int) -> URL? {
+    private func createRestaurantsFrom(data: Data) throws -> [Business] {
+        let response = try JSONDecoder().decode(BusinessSearchResponse.self, from: data)
+
+        return response.businesses
+    }
+    
+    // MARK: -
+    // MARK: Public methods
+    
+    public func createYelpURL(location: Coordinate, radiusInMeters: Int, foodTypes: [FoodType], priceRange: PriceRange, openNow: Bool, resultLimit: Int) -> URL? {
         
         let latitude = location.latitude
         let longitude = location.longitude
@@ -77,15 +86,6 @@ public final class YelpFusionAPIModel {
         
         return URL(string: urlString)
     }
-    
-    private func createRestaurantsFrom(data: Data) throws -> [Business] {
-        let response = try JSONDecoder().decode(BusinessSearchResponse.self, from: data)
-
-        return response.businesses
-    }
-    
-    // MARK: -
-    // MARK: Public methods
     
     public func getNearbyRestaurants(location: Coordinate, radiusInMeters: Int, foodTypes: [FoodType], priceRange: PriceRange, openNow: Bool, resultLimit: Int? = nil) async throws -> [Business] {
 
